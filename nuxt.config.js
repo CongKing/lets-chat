@@ -23,7 +23,8 @@ module.exports = {
   ** Global CSS
   */
   css: [
-    'we-vue/lib/style.css'
+    'we-vue/lib/style.css',
+    '~/static/css/aminate.css'
   ],
   /*
   ** Plugins to load before mounting the App

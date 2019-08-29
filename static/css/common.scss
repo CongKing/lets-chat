@@ -1,0 +1,165 @@
+/* mixin */
+
+// flex
+@mixin flex {
+    display: flex;
+}
+
+// 水平居中
+@mixin flex-r-c {
+    display: flex;
+    justify-content: center;
+}
+
+// 水平垂直居中
+@mixin flex-rc-c {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// 垂直居中
+@mixin flex-c-c {
+    display: flex;
+    align-items: center;
+}
+
+// 绝对定位 水平居中
+@mixin abs-r-c {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);    
+}
+
+// 绝对定位 垂直居中
+@mixin abs-c-c {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+// 绝对定位 水平垂直居中
+@mixin abs-rc-c {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+// 伪元素 最小边框
+@mixin border {
+    content: " ";
+    position: absolute;
+    transform-origin: 0 0;
+    transform: scaleY(.5);
+    border-top: 1px solid #c0bfc4;
+    color: #c0bfc4;
+}
+
+
+@mixin border-abs-top {
+    @include border;
+    height: 1px;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+@mixin border-abs-bottom {
+    @include border;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+@mixin border-abs-left {
+    @include border;
+    width: 1px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+@mixin border-abs-right {
+    @include border;
+    width: 1px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+@mixin arrow {
+    content: '';
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border: 2px solid #000;
+    border-bottom: transparent;
+    border-left: transparent;
+    display: inline-block;
+    transform: 0 0;
+    transition: all .1s ease-in-out;
+}
+
+@mixin arrow-left {
+    @include arrow;
+    transform: rotate(225deg);
+}
+
+@mixin arrow-right {
+    @include arrow;
+    transform: rotate(45deg);
+}
+
+@mixin arrow-top {
+    @include arrow;
+    transform: rotate(-45deg);
+}
+
+@mixin arrow-bottom {
+    @include arrow;
+    transform: rotate(135deg);
+}
+
+
+@mixin scroll-smooth {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* 类 */
+
+// 伪元素 上边框
+.border-abs-top {
+    &::before {
+        @include border-abs-top;
+    }
+}
+
+// 伪元素 底边框
+.border-abs-bottom {
+    &::before {
+        @include border-abs-bottom;
+    }
+}
+
+// 伪元素 左边框
+.border-abs-left {
+    &::before {
+        @include border-abs-left;
+    }
+}
+
+// 伪元素 右边框
+.border-abs-right {
+    &::before {
+        @include border-abs-right;
+    }
+}
+
+
+

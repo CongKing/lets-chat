@@ -1,5 +1,5 @@
 <template>
-    <div class="convs">
+    <div class="convs" @click="$emit('click')">
         <div class="convs-left">
             <div class="convs-left__img">
                 <img src="~/static/image/avatar/default.jpg" alt="">
