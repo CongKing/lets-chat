@@ -40,7 +40,7 @@ UserSchema.pre("save", function save(next) {
     if (!user.isModified("password")) { return next(); }
     bcrypt.genSalt(10, (err: any, salt: any) => {
         if (err) { return next(err); }
-        bcrypt.hash(user.password, salt, undefined, (err: mongoose.Error, hash: any) => {
+        bcrypt.hash(user.password, salt, (err: mongoose.Error, hash: any) => {
             if (err) { return next(err); }
             user.password = hash;
             next();
@@ -66,4 +66,4 @@ UserSchema.methods = {
     }
 }
 
-export const User = mongoose.model<UserDoc>("User", UserSchema);
+export const user = mongoose.model<UserDoc>("User", UserSchema);

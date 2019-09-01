@@ -24,6 +24,7 @@
       },
       "types": [
         "@types/node",
+        "@types/koa",
         "@nuxt/types"
       ]
     },
