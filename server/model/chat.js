@@ -4,18 +4,17 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const SALT_FACTOR = 5;
 
-const UserSchema = new Schema({
-    nickname: {
+const ChatSchema = new Schema({
+    name: {
         type: String,
         required: true,
     },
     avatar: {
         type: String
     },
-    mobile: {
+    lastMsg: {
         type: String,
-        required: true,
-        unique: true,
+        required: true
     },
     password: {
         type: String,

@@ -4,9 +4,13 @@ const json = require('koa-json')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const app = new Koa()
-const router = require('./controller/user-control')
+const userControl = require('./controller/user-control')
+const commonControl = require('./controller/index')
+
 const moogoose = require('mongoose')
 const koaBody = require('koa-body');
+const {authFilter} = require('./mid/auth')
+const {errorCatcher} = require('./mid/handle-err')
 
 const db = moogoose.connect('mongodb://127.0.0.1:27017/letschat', (err) => {
   if(err) throw err
@@ -53,27 +57,21 @@ async function start () {
 
   app.use(koaBody())
   app.use(json())
+  
+  // 错误处理
+  app.use(errorCatcher)
 
-  app.use(router.routes()).use(router.allowedMethods())
+  app.use(authFilter)
+
+  // 路由
+  app.use(userControl.routes()).use(userControl.allowedMethods())
+  app.use(commonControl.routes()).use(commonControl.allowedMethods())
 
   app.use((ctx) => {
     ctx.status = 200
     ctx.respond = false // Bypass Koa's built-in response handling
     ctx.req.ctx = ctx // This might be useful later on, e.g. in nuxtServerInit or with nuxt-stash
     nuxt.render(ctx.req, ctx.res)
-  })
-
-  // 错误处理
-  app.use(async (ctx, next) => {
-    try {
-      await next();
-    } catch (err) {
-      ctx.status = err.status || err.code;
-      ctx.body = {
-        success: false,
-        message: err.message,
-      }
-    }
   })
 
   app.listen(port, host)

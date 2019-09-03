@@ -16,6 +16,8 @@
 
 <script>
 import axios from 'axios'
+import {login} from '~/api/api'
+import { setTimeout } from 'timers';
 export default {
     data() {
         return {
@@ -25,11 +27,29 @@ export default {
     },
     methods: {
         login: async function() {
-            let resp = await axios.post('/user/login', {
-                mobile: this.mobile,
-                password: this.password
-            })
-            console.log(resp)
+            if(!this.validate()) return;
+            
+            Toast.loading({message: 'loading...', duration: 2000})
+            
+            let {err, data} = await login({mobile: this.mobile, password: this.password})
+            console.log(err)
+            console.log(data)
+            if(err) return
+
+            Toast.success({message:'登陆成功', duration: 2000});
+            setTimeout(() => this.$router.push('./home'), 2000)
+        },
+        validate: function() {
+            if(!/^1[3,4,5,6,7,8,9]{1}[0-9]{9}$/.test(this.mobile)) {
+                TopTips({message: '手机号格式不正确', duration: 3000})
+                return
+            }
+
+            if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(this.password)) {
+                TopTips({message: '密码不正确', duration: 3000})
+                return
+            }
+            return true
         }
     }
 }

@@ -11,13 +11,14 @@
         </div>
 
         <div class="v-signup__signup">
-            <nuxt-link to="/signup">去登陆</nuxt-link>
+            <nuxt-link to="/login">去登陆</nuxt-link>
         </div>
     </dir>
 </template>
 
 <script>
 import axios from 'axios'
+import {signup} from '~/api/api'
 export default {
     data() {
         return {
@@ -30,13 +31,69 @@ export default {
     },
     methods: {
         signup: async function() {
-            let resp = await axios.post('/user/signup', {
+            if(!this.validate()) return 
+            Toast.loading({message: 'loading...', duration: 2000})
+            let {err, data} = await signup({
                 avatar: this.avatar,
                 nickname: this.nickname,
                 mobile: this.mobile,
                 password: this.password
             })
-            console.log(resp)
+            if(err) return
+            Toast.success({message:'注册成功，去登陆吧', duration: 2000})
+            setTimeout(() => this.$router.push('./login'), 2000)
+        },
+        validate: function() {
+
+            // 昵称
+            if(!this.nickname) {
+                TopTips({message: '请输入昵称', duration: 3000})
+                return
+            }
+
+            // 昵称
+            if(/\s+/.test(this.nickname)) {
+                TopTips({message: '请输入正确的昵称，不包括空格', duration: 3000})
+                return
+            }
+
+            // 昵称
+            if(!this.nickname) {
+                TopTips({message: '请输入手机号', duration: 3000})
+                return
+            }
+            
+            // 手机号
+            if(!/^1[3,4,5,6,7,8,9]{1}[0-9]{9}$/.test(this.mobile)) {
+                TopTips({message: '手机号格式不正确', duration: 3000})
+                return
+            }
+            
+            // 密码
+            if(!this.password) {
+                TopTips({message: '请输入密码', duration: 3000})
+                return
+            }
+
+            // 密码
+            if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(this.password)) {
+                TopTips({message: '密码须同时包含英文和字母', duration: 3000})
+                return
+            }
+
+            // 密码
+            if(!this.cPassword) {
+                TopTips({message: '请再次输入密码', duration: 3000})
+                return
+            }
+
+            // 二次密码
+            if(this.cPassword !== this.password) {
+                TopTips({message: '两次输入的密码不一致', duration: 3000})
+                return
+            }
+
+            return true;
         }
     }
 }
