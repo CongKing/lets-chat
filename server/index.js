@@ -8,7 +8,7 @@ const userControl = require('./controller/user-control')
 const commonControl = require('./controller/index')
 
 const moogoose = require('mongoose')
-const koaBody = require('koa-body');
+const koaBody = require('koa-body')
 const {authFilter} = require('./mid/auth')
 const {errorCatcher} = require('./mid/handle-err')
 
@@ -17,7 +17,7 @@ const db = moogoose.connect('mongodb://127.0.0.1:27017/letschat', (err) => {
   console.log('连接成功')
 })
 
-app.keys = ['lets-chat'];
+app.keys = ['lets-chat']
 const CONFIG = {
   key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
   /** (number || 'session') maxAge in ms (default is 1 days) */
@@ -30,9 +30,9 @@ const CONFIG = {
   signed: true, /** (boolean) signed or not (default true) */
   rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */
   renew: false, /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/
-};
+}
 
-app.use(session(CONFIG, app));
+app.use(session(CONFIG, app))
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
@@ -60,7 +60,6 @@ async function start () {
   
   // 错误处理
   app.use(errorCatcher)
-
   app.use(authFilter)
 
   // 路由

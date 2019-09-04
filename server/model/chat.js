@@ -1,33 +1,34 @@
-const bcrypt = require('bcryptjs')
 const mongoose = require('mongoose')
-
 const Schema = mongoose.Schema
-const SALT_FACTOR = 5;
 
 const ChatSchema = new Schema({
     name: {
         type: String,
         required: true,
     },
+    isGroup: {
+        type: Boolean,
+        default: false
+    },
     avatar: {
         type: String
     },
-    lastMsg: {
-        type: String,
-        required: true
+    lastMsg: { // TODO msg schema
+        type: Schema.Types.ObjectId,
+        ref: 'ChatMsg'
     },
-    password: {
-        type: String,
-        required: true,
-    },
-    contacts: { 
-        type: Array
-    },
+    members: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
     meta:{
-        createdAt:{
+        createdAt: {
             type:Date,
             default:Date.now()
-        },updateAt:{
+        },
+        updateAt: {
             type:Date,
             default:Date.now()
         }
@@ -44,34 +45,11 @@ UserSchema.pre("save", function save(next) {
     } else {
         user.meta.updateAt = Date.now()
     }
-    
-    // 密码修改
-    if (!user.isModified("password")) { return next() }
-    
-    bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
-        if (err) { return next(err) }
-
-        bcrypt.hash(user.password, salt, (err, hash) => {
-            if (err) { return next(err) }
-            user.password = hash
-            next()
-        });
-    });
 });
 
 // 静态方法
 UserSchema.methods = {
-    comparePassword: function (candidatePassword) {
-        return new Promise((resolve, reject) => {
-            bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-                if(err) {
-                    reject(err)
-                    return
-                }
-                resolve(isMatch)
-            })
-        })
-    }
+    // TODO sendMsg receive
 }
 
-module.exports = mongoose.model('Kitten', UserSchema)
+module.exports = mongoose.model('Chat', UserSchema)

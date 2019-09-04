@@ -1,6 +1,11 @@
 <template>
     <div class="v-contacts">
-        <contact-item v-for="(item, index) of contacts" :contact="item" :key="['ctac', index].join('-')" />
+        <contact-item 
+        v-for="(item, index) of contacts" 
+        :contact="item" 
+        :key="['ctac', index].join('-')" 
+        @click="chatWith"
+        />
     </div>
 </template>
 
@@ -17,10 +22,15 @@ export default {
         }
     },
     mounted: async function() {
-        Toast.loading({message: 'loading...', duration: 2000})
+        Toast.loading({message: 'loading...', duration: 500})
         let {err, data} = await getContacts()
         if(err) return
         this.contacts = data.data
+    },
+    methods: {
+        chatWith: function(contact) {
+            this.$router.push('/conversation/' + contact._id || '')
+        }
     }
 }
 </script>

@@ -6,6 +6,7 @@
             <wv-input label="密码" placeholder="请输入密码" type="password" v-model="password"></wv-input>
             <wv-input label=" " placeholder="请再次输入密码" type="password" v-model="cPassword"></wv-input>
         </div>
+
         <div class="v-signup__button" @click="signup">
             <wv-button type="primary">注册</wv-button>
         </div>
@@ -44,7 +45,6 @@ export default {
             setTimeout(() => this.$router.push('./login'), 2000)
         },
         validate: function() {
-
             // 昵称
             if(!this.nickname) {
                 TopTips({message: '请输入昵称', duration: 3000})
