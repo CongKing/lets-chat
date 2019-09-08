@@ -28,16 +28,19 @@ export default {
     methods: {
         login: async function() {
             if(!this.validate()) return;
-            
-            Toast.loading({message: 'loading...', duration: 2000})
-            
-            let {err, data} = await login({mobile: this.mobile, password: this.password})
-            console.log(err)
-            console.log(data)
+
+            Toast.loading({message: 'loading...', duration: 1000})
+
+            let [err, data] = await fetch('login', {mobile: this.mobile, password: this.password})
+
             if(err) return
 
-            Toast.success({message:'登陆成功', duration: 2000});
-            setTimeout(() => this.$router.push('./home'), 2000)
+            window.localStorage.setItem('token', data.token)
+            // TODO 存用户信息
+
+            Toast.success({message:'登陆成功', duration: 1000})
+
+            setTimeout(() => this.$router.push('./home'), 1000)
         },
         validate: function() {
             if(!/^1[3,4,5,6,7,8,9]{1}[0-9]{9}$/.test(this.mobile)) {
@@ -67,7 +70,7 @@ export default {
         margin: {
             top: 150px;
             bottom: 40px;
-        } 
+        }
     }
 
     &__ button {
@@ -103,6 +106,6 @@ export default {
         left: 15px;
         z-index: 2;
     }
-    
+
 }
 </style>

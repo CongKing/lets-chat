@@ -1,10 +1,8 @@
-const Koa = require('koa')
+const app = require('./app')
 const session = require('koa-session')
 const json = require('koa-json')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
-const app = new Koa()
-const IO = require('koa-socket-2')
 const userControl = require('./controller/user-control')
 const commonControl = require('./controller/index')
 
@@ -14,24 +12,24 @@ const {authFilter} = require('./mid/auth')
 const {errorCatcher} = require('./mid/handle-err')
 
 
-const io = new IO();
-io.attach(app);
+// const io = new IO();
+// io.attach(app);
 
-io.on('connection', (ctx, data) => {
-  console.log('*************************')
-  console.log(ctx.socket)
-})
+// io.on('connection', (ctx, data) => {
+//   console.log('*************************')
+//   console.log(ctx.socket)
+// })
 
-io.on('message', (ctx, data) => {
-  console.log('*************message************')
-  console.log(ctx.socket)
-  console.log(data)
-})
+// io.on('message', (ctx, data) => {
+//   console.log('*************message************')
+//   console.log(ctx.socket)
+//   console.log(data)
+// })
 
-// The raw socket.io instance is attached as app._io if you need it
-app._io.on( 'connection', sock => {
-  console.log('socket')
-})
+// // The raw socket.io instance is attached as app._io if you need it
+// app._io.on( 'connection', sock => {
+//   console.log('socket')
+// })
 
 const db = moogoose.connect('mongodb://127.0.0.1:27017/letschat', (err) => {
   if(err) throw err
