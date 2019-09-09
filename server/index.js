@@ -8,8 +8,8 @@ const commonControl = require('./controller/index')
 
 const moogoose = require('mongoose')
 const koaBody = require('koa-body')
-const {authFilter} = require('./mid/auth')
-const {errorCatcher} = require('./mid/handle-err')
+const {authFilter} = require('./middleware/auth')
+const {errorCatcher} = require('./middleware/handle-err')
 
 
 // const io = new IO();
@@ -76,7 +76,7 @@ async function start () {
 
   app.use(koaBody())
   app.use(json())
-  
+
   // 错误处理
   app.use(errorCatcher)
   app.use(authFilter)

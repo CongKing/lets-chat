@@ -7,8 +7,8 @@ const ChatMsgSchema = new Schema({
         ref: 'User'
     },
     to: {
-        type: Schema.Types.ObjectId,
-        ref: 'Chat'
+        type: String,
+        index: true
     },
     content: {
         type: String

@@ -21,9 +21,9 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    contacts: { 
-        type: Array
-    },
+    // contacts: {
+    //     type: Array
+    // },
     meta:{
         createdAt:{
             type:Date,
@@ -45,10 +45,10 @@ UserSchema.pre("save", function save(next) {
     } else {
         user.meta.updateAt = Date.now()
     }
-    
+
     // 密码修改
     if (!user.isModified("password")) { return next() }
-    
+
     bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
         if (err) { return next(err) }
 

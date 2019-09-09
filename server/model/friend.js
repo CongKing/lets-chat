@@ -11,9 +11,19 @@ const FriendSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
+  lastMsg: {
+    type: Schema.Types.ObjectId,
+    ref: 'ChatMsg'
+  },
   createAt: {
     type: Date,
     default: Date.now
+  }
+})
+
+FriendSchema.pre('save', function() {
+  if (this.isNew) {
+    this.createAt = Date.now()
   }
 })
 

@@ -1,13 +1,10 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const GroupSchema = new Schema({
+const ChatSchema = new Schema({
     name: {
-      type: String,
-      trim: true,
-      unique: true,
-      match: /^([0-9a-zA-Z]{1,2}|[\u4e00-\u9eff]){1,8}$/,
-      index: true,
+        type: String,
+        required: true,
     },
     isGroup: {
         type: Boolean,
@@ -16,11 +13,7 @@ const GroupSchema = new Schema({
     avatar: {
         type: String
     },
-    owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    lastMsg: {
+    lastMsg: { // TODO msg schema
         type: Schema.Types.ObjectId,
         ref: 'ChatMsg'
     },
@@ -43,7 +36,7 @@ const GroupSchema = new Schema({
 })
 
 // save 前处理
-GroupSchema.pre("save", function save(next) {
+UserSchema.pre("save", function save(next) {
     const user = this
 
     // 更新修改时间
@@ -55,8 +48,8 @@ GroupSchema.pre("save", function save(next) {
 });
 
 // 静态方法
-GroupSchema.methods = {
+UserSchema.methods = {
     // TODO sendMsg receive
 }
 
-module.exports = mongoose.model('Group', GroupSchema)
+module.exports = mongoose.model('Chat', UserSchema)
