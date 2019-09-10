@@ -24,17 +24,16 @@ const fetch = (event, data) => {
  * socket 每次连接都需要判断 token 登陆
  */
 socket.on('connect', async () => {
-
     let token = localStorage.getItem('token')
     if(token) {
-        let user = await fetch('loginByToken', token) // TODO 方法
-        
-        if(user) {
-            // TODO vuex 设置用户相关信息
-            return;
-        }
+        let [err, data] = await fetch('loginByToken', {token})
+        if(err) return
+        window.localStorage.setItem('token', data.token)
+        // TODO
+
+    }else {
+      loginFailback()
     }
-    loginFailback()
 })
 
 const loginFailback = () => {
@@ -42,7 +41,7 @@ const loginFailback = () => {
 }
 
 socket.on('message', () => {
-    // TODO 
+    // TODO
 })
 
 export {socket, fetch}

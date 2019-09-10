@@ -1,8 +1,16 @@
 <template>
    <div>
+     <!-- 顶部导航 -->
+     <div class="search-bar" @click="popupSearch">
+       <search-bar></search-bar>
+     </div>
+
+     <!-- 内容 -->
      <div class="child-view">
       <NuxtChild/>
-    </div>
+     </div>
+
+     <!-- 底部导航 -->
      <wv-tabbar>
       <wv-tabbar-item to="/home/chats" :isOn="activeTab === 'chats'" @click="switchTab('chats')">
         <span slot="icon" style="display: inline-block; position: relative;">
@@ -38,12 +46,13 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-
+import SearchBar from '~/components/home/search-bar/index.vue'
+import PopupPanel from '~/components/common/popup/index.js'
+import SearchContact from '~/components/home/search-contact/index.vue'
 
 export default {
   components: {
-    Logo
+    SearchBar
   },
   data() {
     return {
@@ -53,17 +62,47 @@ export default {
   methods: {
     switchTab: function(tab) {
       this.activeTab = tab
+    },
+    popupSearch: function() {
+      // PopupPanel.slideUp({
+      //   contentComp: SearchContact,
+      //   onDismiss: () => { console.log('关闭') }
+      // })
+      PopupPanel.slideDown({
+        contentComp: SearchContact,
+        onDismiss: () => { console.log('关闭') }
+      })
+      // PopupPanel.slideLeft({
+      //   contentComp: SearchContact,
+      //   onDismiss: () => { console.log('关闭') }
+      // })
+      // PopupPanel.slideRight({
+      //   contentComp: SearchContact,
+      //   onDismiss: () => { console.log('关闭') }
+      // })
     }
   }
 }
 </script>
 
 <style lang='scss' scoped>
+@import '~/static/css/common.scss';
+.search-bar {
+  display: flex;
+  height: 53px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #f4f4f4;
+  @extend .border-abs-bottom;
+}
 .child-view {
   position: absolute;
   box-sizing: border-box;
-  height: calc(100vh - 53px);
-  top: 0;
+  height: calc(100vh - 53px - 53px);
+  top: 53px;
   left: 0;
   right: 0;
 }

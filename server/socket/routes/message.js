@@ -4,6 +4,11 @@ const GroupModel = require('../../model/group.js')
 const SocketModel = require('../../model/socket.js')
 const ChatMsgModel = require('../../model/chat-msg.js')
 
+/**
+ * 好友信息
+ * @param ctx
+ * @returns {Promise<*>}
+ */
 const sendSingleMessage = async (ctx) => {
   const {to, content} = ctx.data
 
@@ -26,11 +31,25 @@ const sendSingleMessage = async (ctx) => {
   return message;
 }
 
+/**
+ * 群信息
+ * @param ctx
+ * @returns {Promise<*>}
+ */
 const sendGroupMessage = async (ctx) => {
   const {to, content} = ctx.data
   // TODO 发送群组消息
 
   // 1. 查询群组
+  const group = await GroupModel.findOne({_id: to, members: {$elemMatch: ctx.socket.user}})
+  if (!group) return '您不是该群的成员'
 
-  //
+  // 2. 发送消息
+  const message = ChatMsgModel.create({
+    from: ctx.socket.user,
+    to: to,
+    content
+  })
+  ctx.socket.to(group.id).emit('message', message)
+  return message
 }

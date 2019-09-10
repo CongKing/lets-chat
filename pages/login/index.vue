@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import {login} from '~/api/api'
 import { setTimeout } from 'timers';
 export default {
@@ -31,16 +30,21 @@ export default {
 
             Toast.loading({message: 'loading...', duration: 1000})
 
-            let [err, data] = await fetch('login', {mobile: this.mobile, password: this.password})
+            // Session 登陆
+            let {err, data} = await login({mobile: this.mobile, password: this.password})
+            if (err) return
 
-            if(err) return
+            // Socket 登陆
+            [err, data] = await fetch('login', {mobile: this.mobile, password: this.password})
+            if (err) return
 
             window.localStorage.setItem('token', data.token)
             // TODO 存用户信息
+            console.log(data)
 
             Toast.success({message:'登陆成功', duration: 1000})
 
-            setTimeout(() => this.$router.push('./home'), 1000)
+            setTimeout(() => this.$router.push('/home'), 1000)
         },
         validate: function() {
             if(!/^1[3,4,5,6,7,8,9]{1}[0-9]{9}$/.test(this.mobile)) {

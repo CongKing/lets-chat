@@ -18,8 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import {signup} from '~/api/api'
+import {login} from '~/api/api'
 export default {
     data() {
         return {
@@ -32,17 +31,23 @@ export default {
     },
     methods: {
         signup: async function() {
-            if(!this.validate()) return 
+            if(!this.validate()) return
             Toast.loading({message: 'loading...', duration: 2000})
-            let {err, data} = await signup({
-                avatar: this.avatar,
-                nickname: this.nickname,
-                mobile: this.mobile,
-                password: this.password
+
+            let [err, data] = await fetch('register', {
+              avatar: this.avatar,
+              nickname: this.nickname,
+              mobile: this.mobile,
+              password: this.password
             })
             if(err) return
-            Toast.success({message:'注册成功，去登陆吧', duration: 2000})
-            setTimeout(() => this.$router.push('./login'), 2000)
+
+            [err, data] = await login({mobile: this.mobile, password: this.password})
+            if (err) return
+
+            window.localStorage.setItem('token', data.token)
+            Toast.success({message:'注册成功', duration: 1000})
+            setTimeout(() => this.$router.push('/home'), 1000)
         },
         validate: function() {
             // 昵称
@@ -62,13 +67,13 @@ export default {
                 TopTips({message: '请输入手机号', duration: 3000})
                 return
             }
-            
+
             // 手机号
             if(!/^1[3,4,5,6,7,8,9]{1}[0-9]{9}$/.test(this.mobile)) {
                 TopTips({message: '手机号格式不正确', duration: 3000})
                 return
             }
-            
+
             // 密码
             if(!this.password) {
                 TopTips({message: '请输入密码', duration: 3000})
@@ -111,7 +116,7 @@ export default {
         margin: {
             top: 150px;
             bottom: 40px;
-        } 
+        }
     }
 
     &__ button {
@@ -147,6 +152,6 @@ export default {
         left: 15px;
         z-index: 2;
     }
-    
+
 }
 </style>

@@ -76,18 +76,15 @@ const login = async (ctx) => {
  */
 const loginByToken = async (ctx) => {
   let {token} = ctx.data
-  if(token) return '无效的token'
-
+  if(!token) return '无效的token'
 
   let rawData = null
   try {
     rawData = await jwt.verify(token, TokenSecret)
   } catch (err) {
-    throw Error('无效的token')
+    throw Error(err)
   }
-
-
-  const user = await User.findOne({mobile: rawData.mobile, _id: rawData._id})
+  const user = await UserModel.findOne({mobile: rawData.data.mobile, _id: rawData.data._id})
   if(!user) return '无效的token'
 
   // 查询好友
@@ -157,9 +154,9 @@ const findUserByMobile = (mobile) => {
 const register = async (ctx) => {
   const {mobile, avatar, nickname, password} = ctx.data
 
-  if(!/^1[3456789]\d{9}$/.test(loginData.mobile)) return '请输入正确的手机号'
-  if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(loginData.password)) return '密码须同时包含英文和字母'
-  if(!loginData.nickname || /\s/.test(loginData.nickname)) return '昵称不能为空'
+  if(!/^1[3456789]\d{9}$/.test(mobile)) return '请输入正确的手机号'
+  if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(password)) return '密码须同时包含英文和字母'
+  if(!nickname || /\s/.test(nickname)) return '昵称不能为空'
 
   let user = await findUserByMobile(mobile)
   if(user) return '手机号已经被注册'
@@ -234,3 +231,7 @@ const deleteFriend = async (ctx) => {
 }
 
 exports.login = login
+exports.loginByToken = loginByToken
+exports.register = register
+exports.addFriend = addFriend
+
