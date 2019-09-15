@@ -1,7 +1,8 @@
 const Koa = require('koa')
 const app = new Koa()
 const IO = require('koa-socket-2')
-const {login, register, addFriend, loginByToken} = require('./socket/routes/user')
+const userRoutes = require('./socket/routes/user')
+const messageRoutes = require('./socket/routes/message')
 const {enhanceContext, route, catchError} = require('./socket/middleware/mid')
 const SocketModel = require('./model/socket')
 
@@ -15,7 +16,7 @@ io.use(route(
     app.io,
     // @ts-ignore
     app._io,
-    {login, register, addFriend, loginByToken},
+  {...userRoutes, ...messageRoutes}
 ))
 
 app._io.on( 'connection', async (socket) => {

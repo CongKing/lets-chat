@@ -9,7 +9,7 @@
             <component :class="compClass"
                        v-bind:is="contentComp"
                        :info="compData"
-                       @hide="visible = false"></component>
+                       @hide="hide"></component>
           </div>
         </div>
       </transition><!-- 内容面板 -->
@@ -153,7 +153,7 @@ export default {
     left: 0;
     bottom: 0;
     right: 0;
-    background: rgba(0, 0, 0, .3);
+    background: linear-gradient(to bottom, #e2e2e2, #f7f7fa);
     z-index: 199;
   }
 

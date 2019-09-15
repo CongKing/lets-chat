@@ -53,3 +53,7 @@ const sendGroupMessage = async (ctx) => {
   ctx.socket.to(group.id).emit('message', message)
   return message
 }
+
+
+exports.sendSingleMessage = sendSingleMessage
+exports.sendGroupMessage = sendGroupMessage

@@ -40,8 +40,9 @@ const loginFailback = () => {
     // TODO 游客身份
 }
 
-socket.on('message', () => {
+socket.on('message', (data) => {
     // TODO
+  console.log('message: ' + data)
 })
 
 export {socket, fetch}

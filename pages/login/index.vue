@@ -40,7 +40,6 @@ export default {
 
             window.localStorage.setItem('token', data.token)
             // TODO 存用户信息
-            console.log(data)
 
             Toast.success({message:'登陆成功', duration: 1000})
 

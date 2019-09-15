@@ -25,9 +25,9 @@ export default {
 <style lang="scss" scoped>
 
 .v-chats {
-    width: 100%;
-    height: 100%;
-    background: #f8f8f8;
+  width: 100%;
+  height: 100%;
+  background: #f8f8f8;
 }
 
 </style>

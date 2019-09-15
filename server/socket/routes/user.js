@@ -3,6 +3,7 @@ const UserModel = require('../../model/user.js')
 const FriendModel = require('../../model/friend.js')
 const GroupModel = require('../../model/group.js')
 const SocketModel = require('../../model/socket.js')
+const RequestModel = require('../../model/request.js')
 const TokenExpiresTime = 1000 * 60 * 60 * 24 * 7
 const TokenSecret = 'shhhhh'
 
@@ -54,7 +55,7 @@ const login = async (ctx) => {
 
   ctx.socket.user = user._id
   await SocketModel.updateOne(
-    {id: ctx.socket.user},
+    {id: ctx.socket.id},
     {
       user: user._id
     })
@@ -184,6 +185,61 @@ const register = async (ctx) => {
   }
 }
 
+const findUsers = async (ctx) => {
+  const {value} = ctx.data
+  if (!value) return '找不到用户'
+
+  let users = await UserModel.find({
+    $or: [
+      {mobile: {$regex : new RegExp(value, 'i')}},
+      {mobile: {$regex : new RegExp(value, 'i')}}
+      ]
+  }, {
+    _id: 1,
+    mobile: 1,
+    avatar: 1,
+    nickname: 1,
+  })
+  return {users}
+}
+
+/**
+ * 发送好友请求
+ * @param ctx
+ * @returns {Promise<*>}
+ */
+const addFriendRequest = async (ctx) => {
+  let {userId} = ctx.data
+
+  let user = await UserModel.findOne({_id: userId})
+  if(!user) '用户不存在'
+
+  let request = await RequestModel.create({
+    from: ctx.socket.user,
+    to: user._id
+  })
+
+  const socket = await SocketModel.findOne({user: userId})
+  ctx._io.to(socket.id).emit('message', '您有新的好友请求，請及时处理')
+
+  return request
+}
+
+const handleRequest = async (ctx) => {
+  const {from, to, status} = ctx.data
+  const request = RequestModel.findOneAndUpdate({from, to},{
+    status: status
+  })
+  if(!request) return '请求已经失效'
+
+  if(status === 'accept') {
+    FriendModel.create({from, to,})
+    FriendModel.create({from: to, to: from,})
+    const socket = await SocketModel.findOne({user: from})
+    ctx._io.to(socket.id).emit('message', '您的好友申请已经通过')
+  }
+  return request
+}
 
 /**
  * 添加好友
@@ -234,4 +290,10 @@ exports.login = login
 exports.loginByToken = loginByToken
 exports.register = register
 exports.addFriend = addFriend
+exports.deleteFriend = deleteFriend
+exports.findUsers = findUsers
+exports.addFriendRequest = addFriendRequest
+exports.handleRequest = handleRequest
+
+
 

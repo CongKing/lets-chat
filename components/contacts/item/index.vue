@@ -6,7 +6,7 @@
                 <img v-show="contact.avatar" :src="contact.avatar" alt="">
             </div>
         </div>
-        <div class="ctats-right">
+        <div :class="{'ctats-right': true, 'no-border': noBorder}">
             {{contact.nickname}}
         </div>
     </div>
@@ -19,19 +19,25 @@ export default {
         contact: {
             type: Object,
             default: () => {}
+        },
+        noBorder: {
+          type: Boolean,
+          default: false
         }
     }
 }
 </script>
 
 <style lang='scss' scoped>
+
+
 .ctats {
     display: flex;
     width: 100%;
     height: 70px;
 
     &-left {
-        width: 70px;
+        width: 85px;
         height: 100%;
         display: flex;
         justify-content: center;
@@ -57,6 +63,9 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: center;
+      &.no-border{
+        border: none;
+      }
     }
 }
 </style>

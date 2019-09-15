@@ -1,5 +1,5 @@
 <template>
-    <dir class="v-signup">
+    <div class="v-signup">
         <div class="v-signup__input">
             <wv-input label="昵称" placeholder="请输入昵称" v-model="nickname"></wv-input>
             <wv-input label="手机号" placeholder="请输入手机号" v-model="mobile"></wv-input>
@@ -14,7 +14,7 @@
         <div class="v-signup__signup">
             <nuxt-link to="/login">去登陆</nuxt-link>
         </div>
-    </dir>
+    </div>
 </template>
 
 <script>
@@ -40,10 +40,17 @@ export default {
               mobile: this.mobile,
               password: this.password
             })
-            if(err) return
 
-            [err, data] = await login({mobile: this.mobile, password: this.password})
-            if (err) return
+            if(err) {
+              Toast.text({duration: 1000, message: err})
+              return
+            }
+
+            let {err_2, data_2} = await login({mobile: this.mobile, password: this.password})
+            if (err_2) {
+              Toast.text({duration: 1000, message: err})
+              return
+            }
 
             window.localStorage.setItem('token', data.token)
             Toast.success({message:'注册成功', duration: 1000})

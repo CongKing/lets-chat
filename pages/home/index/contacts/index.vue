@@ -1,11 +1,10 @@
 <template>
     <div class="v-contacts">
-        <contact-item 
-        v-for="(item, index) of contacts" 
-        :contact="item" 
-        :key="['ctac', index].join('-')" 
-        @click="chatWith"
-        />
+        <contact-item
+        v-for="(item, index) of contacts"
+        :contact="item"
+        :key="['ctac', index].join('-')"
+        @click="chatWith"/>
     </div>
 </template>
 
@@ -36,9 +35,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-v-contacts {
-    width: 100%;
-    height: 100%;
-    background: #f8f8f8;
+.v-contacts {
+  width: 100%;
+  height: 100%;
+  background: #f8f8f8;
 }
 </style>
