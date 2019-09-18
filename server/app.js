@@ -25,6 +25,7 @@ app._io.on( 'connection', async (socket) => {
     id: socket.id,
     ip: socket.request.connection.remoteAddress
   })
+
   // 断开时删除
   socket.on('disconnect', async () => {
     await SocketModel.deleteOne({

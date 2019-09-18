@@ -1,4 +1,5 @@
 const app = require('./app')
+const SocketModel = require('./model/socket')
 const session = require('koa-session')
 const json = require('koa-json')
 const consola = require('consola')
@@ -10,26 +11,6 @@ const moogoose = require('mongoose')
 const koaBody = require('koa-body')
 const {authFilter} = require('./middleware/auth')
 const {errorCatcher} = require('./middleware/handle-err')
-
-
-// const io = new IO();
-// io.attach(app);
-
-// io.on('connection', (ctx, data) => {
-//   console.log('*************************')
-//   console.log(ctx.socket)
-// })
-
-// io.on('message', (ctx, data) => {
-//   console.log('*************message************')
-//   console.log(ctx.socket)
-//   console.log(data)
-// })
-
-// // The raw socket.io instance is attached as app._io if you need it
-// app._io.on( 'connection', sock => {
-//   console.log('socket')
-// })
 
 const db = moogoose.connect('mongodb://127.0.0.1:27017/letschat', (err) => {
   if(err) throw err
@@ -91,6 +72,8 @@ async function start () {
     ctx.req.ctx = ctx // This might be useful later on, e.g. in nuxtServerInit or with nuxt-stash
     nuxt.render(ctx.req, ctx.res)
   })
+
+  await SocketModel.deleteMany({});
 
   app.listen(port, host)
   consola.ready({

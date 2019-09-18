@@ -120,7 +120,7 @@ const loginByToken = async (ctx) => {
   // 设置登陆凭证
   ctx.socket.user = user._id
   await SocketModel.updateOne(
-    {id: ctx.socket.user},
+    {id: ctx.socket.id},
     {
       user: user._id
     })
@@ -220,7 +220,9 @@ const addFriendRequest = async (ctx) => {
   })
 
   const socket = await SocketModel.findOne({user: userId})
+  console.log(socket.user)
   ctx._io.to(socket.id).emit('message', '您有新的好友请求，請及时处理')
+  // ctx._io.emit('message', '您有新的好友请求，請及时处理')
 
   return request
 }
