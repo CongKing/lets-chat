@@ -15,17 +15,32 @@ const ChatSchema = new Schema({
     },
     lastMsg: { // TODO msg schema
         type: Schema.Types.ObjectId,
-        ref: 'ChatMsg'
+        ref: 'ChatMsg',
+        default: ''
     },
-    members: [
+    from: [
         {
             type: Schema.Types.ObjectId,
             ref: 'User'
         }
     ],
+    to: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ],
     activated: {
       type: Boolean,
       default: false,
+    },
+    stick: {
+      type: Boolean,
+      default: false
+    },
+    mute: {
+      type: Boolean,
+      default: false
     },
     meta:{
         createdAt: {
@@ -40,7 +55,7 @@ const ChatSchema = new Schema({
 })
 
 // save 前处理
-UserSchema.pre("save", function save(next) {
+ChatSchema.pre("save", function save(next) {
     const user = this
 
     // 更新修改时间
@@ -52,8 +67,8 @@ UserSchema.pre("save", function save(next) {
 });
 
 // 静态方法
-UserSchema.methods = {
+ChatSchema.methods = {
     // TODO sendMsg receive
 }
 
-module.exports = mongoose.model('Chat', UserSchema)
+module.exports = mongoose.model('Chat', ChatSchema)

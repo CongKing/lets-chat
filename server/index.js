@@ -1,6 +1,7 @@
 const app = require('./app')
 const SocketModel = require('./model/socket')
 const RequestModel = require('./model/request')
+const FriendModel = require('./model/friend')
 const session = require('koa-session')
 const json = require('koa-json')
 const consola = require('consola')
@@ -74,8 +75,9 @@ async function start () {
     nuxt.render(ctx.req, ctx.res)
   })
 
-  await SocketModel.deleteMany({});
-  // await RequestModel.deleteMany({});
+  await SocketModel.deleteMany({})
+  await RequestModel.deleteMany({})
+  await FriendModel.deleteMany({})
 
   app.listen(port, host)
   consola.ready({

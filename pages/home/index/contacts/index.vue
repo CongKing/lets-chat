@@ -16,17 +16,17 @@
       </wv-tabs>
 
       <wv-actionsheet
-        type="ios"
-        :title="currentRequest.username + '的好友请求'"
-        :actions="requestActions"
-        cancel-text="取消"
-        v-model="requestSheetVisible"/>
+                    type="ios"
+                    :title="currentRequest.username + '的好友请求'"
+                    :actions="requestActions"
+                    cancel-text="取消"
+                    v-model="requestSheetVisible"/>
     </div>
 </template>
 
 <script>
 import contactItem from '~/components/contacts/item/index.vue'
-import {getContacts} from '~/api/api'
+import { getContacts } from '~/api/api'
 import { mapMutations } from 'vuex'
 export default {
     components: {
@@ -67,9 +67,8 @@ export default {
         Toast.loading({message: 'loading...', duration: 500})
 
         let [_Coterr, _cotData] = await fetch('getContacts')
-        console.log(_cotData)
         if(_Coterr) return
-        this.contacts = _cotData.data
+        this.contacts = _cotData
 
         let [_reqErr, _reqData] = await fetch('getRequests')
         if(_reqErr) return

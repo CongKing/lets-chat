@@ -4,6 +4,7 @@ const FriendModel = require('../../model/friend.js')
 const GroupModel = require('../../model/group.js')
 const SocketModel = require('../../model/socket.js')
 const RequestModel = require('../../model/request.js')
+const ChatModel = require('../../model/chat')
 const TokenExpiresTime = 1000 * 60 * 60 * 24 * 7
 const TokenSecret = 'shhhhh'
 
@@ -239,9 +240,15 @@ const addFriendRequest = async (ctx) => {
 }
 
 const getContacts = async (ctx) => {
-  const friends = await FriendModel.find({from: ctx.socket.user})
-  console.log(friends)
-  return friends;
+  const friends = await FriendModel.find({from: ctx.socket.user}).populate('to', {
+    _id: 1,
+    nickname: 1,
+    avatar: 1,
+    mobile: 1
+  })
+  return friends.map((friend) => {
+    return friend.to
+  });
 }
 
 
@@ -252,7 +259,7 @@ const getRequests = async (ctx) => {
 
 const handleRequest = async (ctx) => {
   const {from, to, status} = ctx.data
-  console.log(status)
+
   const request = await RequestModel.findOneAndUpdate({from, to},{
     status: status
   })
@@ -262,6 +269,31 @@ const handleRequest = async (ctx) => {
   if(status === 'accept') {
     FriendModel.create({from, to})
     FriendModel.create({from: to, to: from})
+
+    // 新建 chat
+    const list = await UserModel.find({$or: [
+        {_id: from},
+        {_id: to},]
+    })
+    if(!list.length || list.length !== 2) return '找不到用户'
+    ChatModel.create({
+      name: list[0].nickname,
+      isGroup: false,
+      avatar: list[0].avatar,
+      to: list[0],
+      from: list[1],
+      activated: false,
+      stick: false
+    })
+    ChatModel.create({
+      name: list[1].nickname,
+      isGroup: false,
+      avatar: list[1].avatar,
+      to: list[1],
+      from: list[0],
+      activated: false,
+      stick: false
+    })
     const socket = await SocketModel.findOne({user: from})
     ctx._io.to(socket.id).emit('message', '您的好友申请已经通过')
   }
@@ -313,6 +345,18 @@ const deleteFriend = async (ctx) => {
   return {}
 }
 
+const getChats = async (ctx) => {
+  let chats = await ChatModel.find({from: ctx.socket.user})
+    .populate('lastMsg', {
+      toU: 1,
+      content: 1,
+      createdAt: 1,
+      type: ''
+    })
+
+  return chats
+}
+
 exports.login = login
 exports.loginByToken = loginByToken
 exports.register = register
@@ -323,7 +367,4 @@ exports.addFriendRequest = addFriendRequest
 exports.handleRequest = handleRequest
 exports.getContacts = getContacts
 exports.getRequests = getRequests
-
-
-
-
+exports.getChats = getChats

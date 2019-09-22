@@ -16,6 +16,10 @@ export default {
     components: {
         conversation
     },
+    mounted: async function() {
+      let [err, data] = await fetch('getChats')
+      console.log(err, data)
+    },
     methods: {
         chatWith: function() {
             this.$router.push('/conversation')
