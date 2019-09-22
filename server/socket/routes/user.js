@@ -40,6 +40,10 @@ const login = async (ctx) => {
       content: 1,
       createdAt: 1
     })
+
+  // const chats = await RequestModel.find({members: user})
+  // const requests = await RequestModel.find({to: user._id})
+
   groups.forEach((group) => {
     ctx.socket.join(group.id.toString())
   })
@@ -54,6 +58,7 @@ const login = async (ctx) => {
   }, TokenSecret)
 
   ctx.socket.user = user._id
+  ctx.socket.username = user.nickname
   await SocketModel.updateOne(
     {id: ctx.socket.id},
     {
@@ -64,6 +69,8 @@ const login = async (ctx) => {
     token,
     friends,
     groups,
+    // chats,
+    // requests,
     _id: user._id,
     avatar: user.avatar,
     nickname: user.nickname
@@ -97,16 +104,18 @@ const loginByToken = async (ctx) => {
 
   // 查询群组
   const groups = await GroupModel.find({members: user},
-    {
-      _id: 1,
+    { _id: 1,
       name: 1,
       avatar: 1,
       owner: 1
     }).populate('lastMsg', {
-    from: 1,
-    content: 1,
-    createdAt: 1
-  })
+      from: 1,
+      content: 1,
+      createdAt: 1
+    })
+
+  const chats = await RequestModel.find({members: user})
+  const requests = await RequestModel.find({to: user._id})
 
   // 计算token
   token = jwt.sign({
@@ -119,6 +128,7 @@ const loginByToken = async (ctx) => {
 
   // 设置登陆凭证
   ctx.socket.user = user._id
+  ctx.socket.username = user.nickname
   await SocketModel.updateOne(
     {id: ctx.socket.id},
     {
@@ -129,6 +139,8 @@ const loginByToken = async (ctx) => {
     token,
     friends,
     groups,
+    chats,
+    requests,
     _id: user._id,
     avatar: user.avatar,
     nickname: user.nickname
@@ -213,30 +225,43 @@ const addFriendRequest = async (ctx) => {
 
   let user = await UserModel.findOne({_id: userId})
   if(!user) '用户不存在'
-
+  console.log(user._id)
   let request = await RequestModel.create({
+    username: ctx.socket.username,
     from: ctx.socket.user,
     to: user._id
   })
 
   const socket = await SocketModel.findOne({user: userId})
-  console.log(socket.user)
   ctx._io.to(socket.id).emit('message', '您有新的好友请求，請及时处理')
-  // ctx._io.emit('message', '您有新的好友请求，請及时处理')
 
   return request
 }
 
+const getContacts = async (ctx) => {
+  const friends = await FriendModel.find({from: ctx.socket.user})
+  console.log(friends)
+  return friends;
+}
+
+
+const getRequests = async (ctx) => {
+  const requests = await RequestModel.find({to: ctx.socket.user})
+  return requests;
+}
+
 const handleRequest = async (ctx) => {
   const {from, to, status} = ctx.data
-  const request = RequestModel.findOneAndUpdate({from, to},{
+  console.log(status)
+  const request = await RequestModel.findOneAndUpdate({from, to},{
     status: status
   })
+
   if(!request) return '请求已经失效'
 
   if(status === 'accept') {
-    FriendModel.create({from, to,})
-    FriendModel.create({from: to, to: from,})
+    FriendModel.create({from, to})
+    FriendModel.create({from: to, to: from})
     const socket = await SocketModel.findOne({user: from})
     ctx._io.to(socket.id).emit('message', '您的好友申请已经通过')
   }
@@ -296,6 +321,9 @@ exports.deleteFriend = deleteFriend
 exports.findUsers = findUsers
 exports.addFriendRequest = addFriendRequest
 exports.handleRequest = handleRequest
+exports.getContacts = getContacts
+exports.getRequests = getRequests
+
 
 
 

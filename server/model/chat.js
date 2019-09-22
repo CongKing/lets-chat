@@ -23,6 +23,10 @@ const ChatSchema = new Schema({
             ref: 'User'
         }
     ],
+    activated: {
+      type: Boolean,
+      default: false,
+    },
     meta:{
         createdAt: {
             type:Date,

@@ -1,6 +1,8 @@
 <template>
     <div class="v-chats">
-        <conversation @click="chatWith"/>
+        <conversation @click="chatWith"
+                      @onSitck="stickChat"
+                      @onDelete="deleteChat"/>
         <conversation/>
         <conversation/>
         <conversation/>
@@ -17,6 +19,12 @@ export default {
     methods: {
         chatWith: function() {
             this.$router.push('/conversation')
+        },
+        stickChat: function(chat) {
+          // TODO 置顶 / 取消置顶
+        },
+        deleteChat: function(chat) {
+            // TODO 删除聊天
         }
     }
 }

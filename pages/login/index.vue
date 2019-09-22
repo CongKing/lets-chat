@@ -1,5 +1,5 @@
 <template>
-    <dir class="v-login">
+    <div class="v-login">
         <div class="v-login__input">
             <wv-input label="手机号" placeholder="请输入手机号" v-model="mobile"></wv-input>
             <wv-input label="密码" placeholder="请输入密码" type="password" v-model="password"></wv-input>
@@ -11,12 +11,14 @@
         <div class="v-login__signup">
             <nuxt-link to="/signup">去注册</nuxt-link>
         </div>
-    </dir>
+    </div>
 </template>
 
 <script>
 import {login} from '~/api/api'
-import { setTimeout } from 'timers';
+import { setTimeout } from 'timers'
+import { mapMutations } from 'vuex'
+
 export default {
     data() {
         return {
@@ -25,6 +27,12 @@ export default {
         }
     },
     methods: {
+         ...mapMutations([
+           'addFriends',
+           'addGroups',
+           'addChats',
+           'addRequests'
+         ]),
         login: async function() {
             if(!this.validate()) return;
 
@@ -39,8 +47,13 @@ export default {
             if (err) return
 
             window.localStorage.setItem('token', data.token)
-            // TODO 存用户信息
 
+            // TODO 存用户信息
+            this.addFriends(data.friends)
+            this.addGroups(data.groups)
+            this.addRequests(data.requests)
+            this.addFriends(data.friends)
+            this.addFriends(data.friends)
             Toast.success({message:'登陆成功', duration: 1000})
 
             setTimeout(() => this.$router.push('/home'), 1000)

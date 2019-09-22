@@ -1,5 +1,6 @@
 const app = require('./app')
 const SocketModel = require('./model/socket')
+const RequestModel = require('./model/request')
 const session = require('koa-session')
 const json = require('koa-json')
 const consola = require('consola')
@@ -74,6 +75,7 @@ async function start () {
   })
 
   await SocketModel.deleteMany({});
+  // await RequestModel.deleteMany({});
 
   app.listen(port, host)
   consola.ready({

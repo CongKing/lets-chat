@@ -7,7 +7,7 @@
             </div>
         </div>
         <div :class="{'ctats-right': true, 'no-border': noBorder}">
-            {{contact.nickname}}
+            {{contact.nickname || contact.username}}
         </div>
     </div>
 </template>
