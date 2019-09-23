@@ -1,6 +1,9 @@
 <template>
     <div class="v-signup">
         <div class="v-signup__input">
+            <div>
+              <FileInput v-model="fileData" @error="handleUploadError" />
+            </div>
             <wv-input label="昵称" placeholder="请输入昵称" v-model="nickname"></wv-input>
             <wv-input label="手机号" placeholder="请输入手机号" v-model="mobile"></wv-input>
             <wv-input label="密码" placeholder="请输入密码" type="password" v-model="password"></wv-input>
@@ -19,9 +22,14 @@
 
 <script>
 import {login} from '~/api/api'
+import FileInput from '~/components/file-input/file-input.vue'
 export default {
+    components: {
+      FileInput
+    },
     data() {
         return {
+            fileData: {},
             avatar: '',
             nickname: '',
             mobile: '',
@@ -106,7 +114,18 @@ export default {
             }
 
             return true;
+        },
+        handleUploadError: function() {}
+    },
+    watch: {
+      fileData: function(val) {
+        if(val.data) {
+          fetch('uploadFile', {
+            name: val.name,
+            data: val.data
+          })
         }
+      }
     }
 }
 </script>

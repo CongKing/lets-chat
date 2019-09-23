@@ -12,10 +12,10 @@ export const mutations = {
   addGroups: function(state, groups) {
     state.groups.push(...groups)
   },
-  addChats: function() {
+  addChats: function(state, groups) {
     state.chat.push(...groups)
   },
-  addRequests: function() {
+  addRequests: function(state, groups) {
     state.request.push(...groups)
   }
 }
