@@ -14,7 +14,7 @@
      <wv-tabbar>
       <wv-tabbar-item to="/home/chats" :isOn="activeTab === 'chats'" @click="switchTab('chats')">
         <span slot="icon" style="display: inline-block; position: relative;">
-          <img v-if="activeTab !== 'chats'" class="weui-tabbar__icon" src="~/static/image/icon/chat.png" slot="icon">
+          <img v-if="activeTab !== 'chats'" class="weui-tabbar__icon" src="/image/icon/chat.png" slot="icon">
           <img v-if="activeTab === 'chats'" class="weui-tabbar__icon" src="~/static/image/icon/chat-act.png" slot="icon">
           <wv-badge style="position: absolute;top: -2px;right: -13px;">8</wv-badge>
         </span>

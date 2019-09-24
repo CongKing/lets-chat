@@ -4,6 +4,7 @@
             <wv-input label="手机号" placeholder="请输入手机号" v-model="mobile"></wv-input>
             <wv-input label="密码" placeholder="请输入密码" type="password" v-model="password"></wv-input>
         </div>
+
         <div class="v-login__button" @click="login">
             <wv-button type="primary">登陆</wv-button>
         </div>
@@ -28,10 +29,9 @@ export default {
     },
     methods: {
          ...mapMutations([
-           'addFriends',
-           'addGroups',
-           'addChats',
-           'addRequests'
+           'setNickname',
+           'setAvatar',
+           'setMobile'
          ]),
         login: async function() {
             if(!this.validate()) return;
@@ -47,13 +47,10 @@ export default {
             if (err) return
 
             window.localStorage.setItem('token', data.token)
+            this.setNickname(data.nickname)
+            this.setAvatar(data.avatar)
+            this.setMobile(data.mobile)
 
-            // TODO 存用户信息
-            this.addFriends(data.friends)
-            this.addGroups(data.groups)
-            this.addRequests(data.requests)
-            this.addFriends(data.friends)
-            this.addFriends(data.friends)
             Toast.success({message:'登陆成功', duration: 1000})
 
             setTimeout(() => this.$router.push('/home'), 1000)

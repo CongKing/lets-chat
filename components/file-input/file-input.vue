@@ -6,10 +6,10 @@
            :value="innerVal"
            ref="inputer"
            type="file"/>
-    <label for="rdInput" v-show="!preview" :style="{'backgroundImage': 'url(' + bgImg + ')'}"></label>
-    <label for="rdInput" class="file-input__preview" v-show="preview">
+    <label for="rdInput" v-show="!preview && !preImg" :style="{'backgroundImage': 'url(' + bgImg + ')'}"></label>
+    <label for="rdInput" class="file-input__preview" v-show="preview || preImg">
       <div class="file-input__preview-remove"></div>
-      <img :src="preview" />
+      <img :src="preview || preImg" />
     </label>
   </div>
 </template>
@@ -30,6 +30,10 @@
         type: Number,
         default: (1024 * 10 * 1024)
       },
+      preImg: {
+        type: String,
+        default: ''
+      },
       maxUpload: {
         type: Number,
         default: 1
@@ -45,8 +49,8 @@
     },
     methods: {
       remove: function() {
-        let fileBeRemove = this.file;
-        this.$emit('delete', fileBeRemove);
+        this.file = {}
+        this.preview = ''
       },
       onFileChange: async function(event) {
         let file = event.target.files[0];

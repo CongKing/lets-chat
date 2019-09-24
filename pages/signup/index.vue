@@ -118,13 +118,13 @@ export default {
         handleUploadError: function() {}
     },
     watch: {
-      fileData: function(val) {
-        if(val.data) {
-          fetch('uploadFile', {
-            name: val.name,
-            data: val.data
-          })
-        }
+      fileData: async function(val) {
+        if(!val.data) return
+        let [err, data] = await fetch('uploadFile', {
+          name: val.name,
+          data: val.data
+        })
+        this.avatar = data.filePath
       }
     }
 }
@@ -143,10 +143,6 @@ export default {
             top: 150px;
             bottom: 40px;
         }
-    }
-
-    &__ button {
-
     }
 
     &__signup {

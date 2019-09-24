@@ -1,4 +1,7 @@
 export const state = () => ({
+  avatar: '',
+  nickname: '',
+  mobile: '',
   friends: [],
   groups: [],
   chat: [],
@@ -6,6 +9,15 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setNickname: function(state, name) {
+    state.nickname = name
+  },
+  setAvatar: function(state, avatar) {
+    state.avatar = avatar
+  },
+  setMobile: function(state, mobile) {
+    state.mobile = mobile
+  },
   addFriends: function(state, friends) {
     state.friends.push(...friends)
   },

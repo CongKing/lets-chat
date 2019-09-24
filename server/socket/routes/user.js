@@ -42,9 +42,6 @@ const login = async (ctx) => {
       createdAt: 1
     })
 
-  // const chats = await RequestModel.find({members: user})
-  // const requests = await RequestModel.find({to: user._id})
-
   groups.forEach((group) => {
     ctx.socket.join(group.id.toString())
   })
@@ -70,11 +67,10 @@ const login = async (ctx) => {
     token,
     friends,
     groups,
-    // chats,
-    // requests,
     _id: user._id,
     avatar: user.avatar,
-    nickname: user.nickname
+    nickname: user.nickname,
+    mobile: user.mobile
   }
 }
 
@@ -144,7 +140,8 @@ const loginByToken = async (ctx) => {
     requests,
     _id: user._id,
     avatar: user.avatar,
-    nickname: user.nickname
+    nickname: user.nickname,
+    mobile: user.mobile
   }
 }
 
@@ -357,6 +354,23 @@ const getChats = async (ctx) => {
   return chats
 }
 
+const changeProfile = async (ctx) => {
+  let {avatar, nickname} = ctx.data
+  if (!avatar && !nickname) return '修改失败'
+
+  const oriUser = await UserModel.findOne({_id: ctx.socket.user})
+
+  nickname = nickname || oriUser.nickname
+  avatar = avatar || oriUser.avatar
+
+  const user = await UserModel.findOneAndUpdate({_id: ctx.socket.user}, {
+    nickname,
+    avatar
+  })
+
+  return user
+}
+
 exports.login = login
 exports.loginByToken = loginByToken
 exports.register = register
@@ -368,3 +382,5 @@ exports.handleRequest = handleRequest
 exports.getContacts = getContacts
 exports.getRequests = getRequests
 exports.getChats = getChats
+exports.changeProfile = changeProfile
+

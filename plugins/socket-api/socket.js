@@ -24,16 +24,18 @@ const fetch = (event, data) => {
  * socket 每次连接都需要判断 token 登陆
  */
 socket.on('connect', async () => {
-    let token = localStorage.getItem('token')
-    if(token) {
-        let [err, data] = await fetch('loginByToken', {token})
-        if(err) return
-        window.localStorage.setItem('token', data.token)
-        // TODO
-
-    }else {
-      loginFailback()
-    }
+  let token = localStorage.getItem('token')
+  if(token) {
+    let [err, data] = await fetch('loginByToken', {token})
+    if(err) return
+    window.localStorage.setItem('token', data.token)
+    const store = $nuxt.$store
+    store.commit('setNickname', data.nickname)
+    store.commit('setAvatar', data.avatar)
+    store.commit('setMobile', data.mobile)
+  }else {
+    loginFailback()
+  }
 })
 
 const loginFailback = () => {
