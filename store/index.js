@@ -18,16 +18,16 @@ export const mutations = {
   setMobile: function(state, mobile) {
     state.mobile = mobile
   },
-  addFriends: function(state, friends) {
-    state.friends.push(...friends)
+  addFriends: function(state, friendList) {
+    state.friends.push(...friendList)
   },
-  addGroups: function(state, groups) {
-    state.groups.push(...groups)
+  addGroups: function(state, groupList) {
+    state.groups.push(...groupList)
   },
-  addChats: function(state, groups) {
-    state.chat.push(...groups)
+  addChats: function(state, chatList) {
+    state.chat.push(...chatList)
   },
-  addRequests: function(state, groups) {
-    state.request.push(...groups)
+  addRequests: function(state, requestList) {
+    state.request.push(...requestList)
   }
 }

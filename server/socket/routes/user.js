@@ -222,16 +222,29 @@ const addFriendRequest = async (ctx) => {
   let {userId} = ctx.data
 
   let user = await UserModel.findOne({_id: userId})
-  if(!user) '用户不存在'
-  console.log(user._id)
-  let request = await RequestModel.create({
-    username: ctx.socket.username,
+  if(!user) return '用户不存在'
+  let request = await RequestModel.findOne({
     from: ctx.socket.user,
     to: user._id
   })
 
+  if(request) {
+    RequestModel.update({
+      from: ctx.socket.user,
+      to: user._id
+    }, {
+      status: 'pending'
+    })
+  } else {
+    request = await RequestModel.create({
+      username: ctx.socket.username,
+      from: ctx.socket.user,
+      to: user._id
+    })
+  }
+
   const socket = await SocketModel.findOne({user: userId})
-  ctx._io.to(socket.id).emit('message', '您有新的好友请求，請及时处理')
+  ctx._io.to(socket.id).emit('friend-request', request)
 
   return request
 }
@@ -243,6 +256,10 @@ const getContacts = async (ctx) => {
     avatar: 1,
     mobile: 1
   })
+  const fs = await FriendModel.find({})
+  console.log(fs)
+  console.log(friends)
+  console.log(ctx.socket.user)
   return friends.map((friend) => {
     return friend.to
   });
@@ -250,7 +267,10 @@ const getContacts = async (ctx) => {
 
 
 const getRequests = async (ctx) => {
-  const requests = await RequestModel.find({to: ctx.socket.user})
+  const requests = await RequestModel.find({
+    to: ctx.socket.user,
+    status: 'pending'
+  })
   return requests;
 }
 
@@ -264,14 +284,14 @@ const handleRequest = async (ctx) => {
   if(!request) return '请求已经失效'
 
   if(status === 'accept') {
-    FriendModel.create({from, to})
-    FriendModel.create({from: to, to: from})
-
+    await FriendModel.create([{from, to}, {from: to, to: from}])
+    console.log('create')
     // 新建 chat
     const list = await UserModel.find({$or: [
         {_id: from},
         {_id: to},]
     })
+
     if(!list.length || list.length !== 2) return '找不到用户'
     ChatModel.create({
       name: list[0].nickname,

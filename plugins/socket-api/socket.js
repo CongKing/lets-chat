@@ -47,4 +47,10 @@ socket.on('message', (data) => {
   console.log('message: ' + data)
 })
 
+socket.on('friend-request', (request) => {
+  if(!request) return
+  const store = $nuxt.$store
+  store.commit('addRequests', [request])
+})
+
 export {socket, fetch}

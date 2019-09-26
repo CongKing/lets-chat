@@ -33,35 +33,35 @@ export default {
         contactItem
     },
     data() {
-        return {
-            contacts: [],
-            request: {},
-            requests: [],
-            currentRequest: {},
-            requestSheetVisible: false,
-            requestActions: [
-              {
-                name: '拒绝',
-                method: async () => {
-                  await fetch('handleRequest', {
-                    from: this.currentRequest.from,
-                    to: this.currentRequest.to,
-                    status: 'reject'
-                  })
-                }
-              },
-              {
-                name: '同意',
-                method: async () => {
-                  await fetch('handleRequest', {
-                    from: this.currentRequest.from,
-                    to: this.currentRequest.to,
-                    status: 'accept'
-                  })
-                }
-              }
-            ]
-        }
+      return {
+        contacts: [],
+        request: {},
+        requests: [],
+        currentRequest: {},
+        requestSheetVisible: false,
+        requestActions: [
+          {
+            name: '拒绝',
+            method: async () => {
+              await fetch('handleRequest', {
+                from: this.currentRequest.from,
+                to: this.currentRequest.to,
+                status: 'reject'
+              })
+            }
+          },
+          {
+            name: '同意',
+            method: async () => {
+              await fetch('handleRequest', {
+                from: this.currentRequest.from,
+                to: this.currentRequest.to,
+                status: 'accept'
+              })
+            }
+          }
+        ]
+      }
     },
     mounted: async function() {
         Toast.loading({message: 'loading...', duration: 500})
@@ -73,7 +73,6 @@ export default {
         let [_reqErr, _reqData] = await fetch('getRequests')
         if(_reqErr) return
         this.requests = _reqData
-
         // let {err, data} = await getContacts()
         // if(err) return
         // this.contacts = data.data
