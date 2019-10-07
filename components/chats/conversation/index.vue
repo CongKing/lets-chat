@@ -1,22 +1,22 @@
 <template>
-    <div class="convs" @click="$emit('click')" v-hammer:press="onPress">
-        <div class="convs-left">
-            <div class="convs-left__img">
-                <img src="~/static/image/avatar/default.jpg" alt="">
-            </div>
-        </div>
-        <div class="convs-right">
-            <div class="convs-right-top">
-                <div class="convs-right-top__name">不是我吹</div><!--
-                --><div class="convs-right-top__time">Yeaterday</div>
-            </div>
-            <div class="convs-right-btm">
-                <div class="convs-right-btm__msg">爱笑的眼睛：大麦</div><!--
-                --><div class="convs-right-btm__mute">Mute</div>
-            </div>
-        </div>
-
-
+    <div class="convs" @click="$emit('click', chat)" v-hammer:press="onPress">
+      <div class="convs-left">
+          <div class="convs-left__img">
+              <img v-if="chat.avatar" :src="chat.avatar" alt="">
+              <img v-else src="~/static/image/avatar/default.jpg" alt="">
+              <wv-badge v-show="chat.unread" style="position: absolute;top: -2px;right: -8px;">{{chat.unread}}</wv-badge>
+          </div>
+      </div>
+      <div class="convs-right">
+          <div class="convs-right-top">
+              <div class="convs-right-top__name">{{chat.to.nickname}}</div><!--
+              --><div class="convs-right-top__time">{{chat.lastMsg && chat.lastMsg.createdAt || ''}}</div>
+          </div>
+          <div class="convs-right-btm">
+              <div class="convs-right-btm__msg">{{chat.lastMsg && chat.lastMsg.content || ''}}</div><!--
+              --><div class="convs-right-btm__mute" v-if="chat.mute">Mute</div>
+          </div>
+      </div>
       <div class="convs-menu" v-show="showMenu">
         <ul class="convs-menu__ul">
           <li @click.stop="handleClick('stick')">Sticky on Top</li>
@@ -25,7 +25,6 @@
         <div class="convs-menu__mask" @click.stop="showMenu=false">
         </div>
       </div>
-
     </div>
 </template>
 
@@ -79,7 +78,7 @@ export default {
             width: 52px;
             height: 52px;
             border-radius: 3px;
-            overflow: hidden;
+            position: relative;
             img {
                 width: 100%;
                 height: 100%;
@@ -98,7 +97,8 @@ export default {
         &-top {
             width: 100%;
             height: 22px;
-
+            padding-right: 12px;
+            box-sizing: border-box;
             &__name {
                 display: inline-block;
                 box-sizing: border-box;
@@ -113,12 +113,15 @@ export default {
                 display: inline-block;
                 box-sizing: border-box;
                 width: 90px;
+                height: 100%;
+                white-space: nowrap;
+                overflow: hidden;
                 text-align: right;
+                text-overflow: ellipsis;
                 font-size: 14px;
                 line-height: 18px;
                 vertical-align: top;
                 color: #d6d6d6;
-                padding-right: 18px;
             }
         }
 

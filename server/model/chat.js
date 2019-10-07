@@ -2,34 +2,18 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const ChatSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    isGroup: {
-        type: Boolean,
-        default: false
-    },
-    avatar: {
-        type: String
-    },
     lastMsg: { // TODO msg schema
         type: Schema.Types.ObjectId,
-        ref: 'ChatMsg',
-        default: ''
+        ref: 'ChatMsg'
     },
-    from: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    ],
-    to: [
-      {
+    from: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-      }
-    ],
+    },
+    to: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     activated: {
       type: Boolean,
       default: false,
@@ -42,28 +26,33 @@ const ChatSchema = new Schema({
       type: Boolean,
       default: false
     },
+    unread: {
+      type: Number,
+      default: 0
+    },
     meta:{
         createdAt: {
             type:Date,
-            default:Date.now()
+            default: Date.now()
         },
         updateAt: {
             type:Date,
-            default:Date.now()
+            default: Date.now()
         }
     }
 })
 
 // save 前处理
 ChatSchema.pre("save", function save(next) {
-    const user = this
+    const chat = this
 
     // 更新修改时间
-    if(user.isNew) {
-        user.meta.createAt = new Date()
+    if(chat.isNew) {
+      chat.meta.createAt = Date.now()
     } else {
-        user.meta.updateAt = Date.now()
+      chat.meta.updateAt = Date.now()
     }
+    next();
 });
 
 // 静态方法

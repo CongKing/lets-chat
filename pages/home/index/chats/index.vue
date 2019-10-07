@@ -1,12 +1,15 @@
 <template>
     <div class="v-chats">
-        <conversation @click="chatWith"
+        <conversation v-for="(chat, index) of chatList"
+                      @click="chatWith"
                       @onSitck="stickChat"
-                      @onDelete="deleteChat"/>
-        <conversation/>
-        <conversation/>
-        <conversation/>
-        <conversation/>
+                      @onDelete="deleteChat"
+                      :chat="chat"
+                      :key="['chat', index].join('-')"/>
+        <!--<conversation/>-->
+        <!--<conversation/>-->
+        <!--<conversation/>-->
+        <!--<conversation/>-->
     </div>
 </template>
 
@@ -16,13 +19,22 @@ export default {
     components: {
         conversation
     },
+    data() {
+      return {
+        chatList: []
+      }
+    },
     mounted: async function() {
       let [err, data] = await fetch('getChats')
-      console.log(err, data)
+      if(err) {
+        return console.log(err)
+      }
+      this.chatList = data
     },
     methods: {
-        chatWith: function() {
-            this.$router.push('/conversation')
+        chatWith: function(chat) {
+          console.log(chat)
+          if(chat._id) this.$router.push('/conversation/' + chat.to._id)
         },
         stickChat: function(chat) {
           // TODO 置顶 / 取消置顶

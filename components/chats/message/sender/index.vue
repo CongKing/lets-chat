@@ -1,11 +1,12 @@
 <template>
     <div class="msg-wrapper">
         <div class="msg__avatar">
-            <img src="~/static/image/avatar/default.jpg" alt="">
+            <img v-if="avatar" :src="avatar" alt="">
+            <img v-else src="~/static/image/avatar/default.jpg" alt="">
         </div>
         <div class="content-wrapper">
             <div class="content">
-                Thanks for signing in to MDN with GitHub. To finish setting up your MDN Web Docs account, please choose a username and email address.
+                {{content || 'Thanks for signing in to MDN with GitHub. To finish setting up your MDN Web Docs account, please choose a username and email address.'}}
             </div>
         </div>
     </div>
@@ -13,7 +14,16 @@
 
 <script>
 export default {
-    
+  props: {
+    content: {
+      type: String,
+      default: ''
+    },
+    avatar: {
+      type: String,
+      default: ''
+    }
+  }
 }
 </script>
 
@@ -74,10 +84,10 @@ export default {
                     top: 5px solid transparent;
                     bottom: 5px solid transparent;
                 }
-                
+
             }
         }
-        
+
     }
 }
 

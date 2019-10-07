@@ -257,9 +257,6 @@ const getContacts = async (ctx) => {
     mobile: 1
   })
   const fs = await FriendModel.find({})
-  console.log(fs)
-  console.log(friends)
-  console.log(ctx.socket.user)
   return friends.map((friend) => {
     return friend.to
   });
@@ -276,7 +273,6 @@ const getRequests = async (ctx) => {
 
 const handleRequest = async (ctx) => {
   const {from, to, status} = ctx.data
-
   const request = await RequestModel.findOneAndUpdate({from, to},{
     status: status
   })
@@ -285,7 +281,6 @@ const handleRequest = async (ctx) => {
 
   if(status === 'accept') {
     await FriendModel.create([{from, to}, {from: to, to: from}])
-    console.log('create')
     // 新建 chat
     const list = await UserModel.find({$or: [
         {_id: from},
@@ -293,25 +288,21 @@ const handleRequest = async (ctx) => {
     })
 
     if(!list.length || list.length !== 2) return '找不到用户'
-    ChatModel.create({
-      name: list[0].nickname,
-      isGroup: false,
-      avatar: list[0].avatar,
-      to: list[0],
-      from: list[1],
-      activated: false,
-      stick: false
-    })
-    ChatModel.create({
-      name: list[1].nickname,
-      isGroup: false,
-      avatar: list[1].avatar,
-      to: list[1],
-      from: list[0],
-      activated: false,
-      stick: false
-    })
-    const socket = await SocketModel.findOne({user: from})
+    let chats = await ChatModel.create([
+      {
+        to: list[0]._id,
+        from: list[1]._id,
+        activated: false,
+        stick: false
+      },
+      {
+        to: list[1]._id,
+        from: list[0]._id,
+        activated: false,
+        stick: false
+      }])
+    console.log(chats)
+    console.log('created')
     ctx._io.to(socket.id).emit('message', '您的好友申请已经通过')
   }
   return request
@@ -363,14 +354,17 @@ const deleteFriend = async (ctx) => {
 }
 
 const getChats = async (ctx) => {
+
   let chats = await ChatModel.find({from: ctx.socket.user})
     .populate('lastMsg', {
-      toU: 1,
+      to: 1,
       content: 1,
-      createdAt: 1,
-      type: ''
+      createdAt: 1
+    }).populate('to', {
+      avatar: 1,
+      nickname: 1,
+      _id: 1
     })
-
   return chats
 }
 
@@ -391,6 +385,8 @@ const changeProfile = async (ctx) => {
   return user
 }
 
+
+
 exports.login = login
 exports.loginByToken = loginByToken
 exports.register = register
@@ -403,4 +399,5 @@ exports.getContacts = getContacts
 exports.getRequests = getRequests
 exports.getChats = getChats
 exports.changeProfile = changeProfile
+
 

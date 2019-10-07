@@ -8,14 +8,15 @@ const ChatMsgSchema = new Schema({
     },
     to: {
         type: String,
-        index: true
+        index: true,
+        ref: 'User'
     },
     content: {
         type: String
     },
     createdAt: {
-        type:Date,
-        default:Date.now()
+        type: Date,
+        default: Date.now()
     }
 })
 
@@ -26,6 +27,7 @@ ChatMsgSchema.pre("save", function (next) {
     if(msg.isNew) {
         msg.createAt = new Date()
     }
+    next()
 })
 
 module.exports = mongoose.model('ChatMsg', ChatMsgSchema)

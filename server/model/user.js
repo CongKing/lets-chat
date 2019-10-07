@@ -21,9 +21,6 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    // contacts: {
-    //     type: Array
-    // },
     meta:{
         createdAt:{
             type:Date,

@@ -2,14 +2,24 @@
     <div class="v-convs">
         <div class="v-convs-top">
             <div class="v-convs-top__arrow" @click="back"><arrow/></div>
-            <div class="v-convs-top__name">不是我吹 <mute>(mute)</mute></div>
+            <div class="v-convs-top__name">{{to.nickname}} <span>(mute)</span></div>
             <div class="v-convs-top__more">
                 <img src="~/static/image/icon/conversation/more.png" alt="">
             </div>
         </div>
 
         <div ref="compBody" class="v-convs-body">
-            <msg-getter />
+          <div v-for="(msg, index) of history">
+            <msg-getter v-if="msg.to.mobile !== to.mobile"
+                        :content="msg.content"
+                        :avatar="msg.to.avatar.content"
+                        :name="msg.to.nickname"/>
+            <msg-sender v-else
+                        :content="msg.content"
+                        :avatar="avatar"
+                        :name="nickname"/>
+          </div>
+
             <msg-sender />
             <msg-getter />
             <msg-getter />
@@ -22,12 +32,12 @@
                     <img src="~/static/image/icon/conversation/keyboard.png" alt="">
                 </div>
                 <div class="bottom__msg">
-                    <input type="text">
+                    <input type="text" v-model="content">
                 </div>
                 <div class="bottom__emoji">
                     <img src="~/static/image/icon/conversation/smile.png" alt="">
                 </div>
-                <div class="bottom__more">
+                <div class="bottom__more" @click="send">
                     <img v-show="false" src="~/static/image/icon/conversation/add.png" alt="">
                     <wv-button type="primary" :mini="true">发送</wv-button>
                 </div>
@@ -40,6 +50,7 @@
 import arrow from '~/components/common/wedges/arrow/index.vue'
 import MsgGetter from '~/components/chats/message/getter/index.vue'
 import MsgSender from '~/components/chats/message/sender/index.vue'
+import {mapState} from 'vuex'
 export default {
     transition: 'fade',
     components: {
@@ -47,17 +58,48 @@ export default {
         MsgGetter,
         MsgSender
     },
-    asyncData: function(ctx) {
-        // 请求消息
-        return {msgList: [11111,22222,33333,44444]}
+    data() {
+      return {
+        content: '',
+        sending: false
+      }
+    },
+    asyncData: async function(ctx) {
+      let [err, data] = await fetch('getChattingHistory', {id: ctx.params.id})
+      let {to ,history} = data
+      // 请求消息
+      console.log(history)
+      return {to ,history}
     },
     mounted: function() {
-        console.log(this.$route.params)
-        console.log(this.msgList)
     },
     methods: {
         back: function() {
             window.history.back()
+        },
+        send: async function() {
+          if(this.sending) return
+          this.sending = true
+          /**
+           * 1 生成生成 message ,
+           * 2 消掉 input 中的值
+           * 3 发送消息
+           * 4 监听成功发送的 callback
+           */
+          const content = this.content
+          // 本地生成 message
+          this.history.push({
+            from: '',
+            content,
+            to: { // 补全
+              mobile: this.to.mobile
+            }
+          })
+          // 清空内容
+          this.content = ''
+          // 发送消息
+          await fetch('sendMsg', {id: this.to._id, content})
+          this.sending = false
         },
         scrollToBottom: function() {
             let height = this.$refs.compBody.clientHeight;
@@ -67,6 +109,11 @@ export default {
                 this.$refs.compBody.scrollTop = height;
             }
         }
+    },
+    computed: {
+      ...mapState([
+        'avatar', 'nickname', 'mobile'
+      ])
     }
 }
 </script>
@@ -86,7 +133,7 @@ export default {
         position: absolute;
         top: 0;
         background: #f7f7fa;
-        
+
         &__arrow {
             width: 12px;
             height: 12px;
@@ -137,7 +184,7 @@ export default {
             .bottom__mode {
                 @include flex-rc-c;
                 width: 50px;
-                
+
                 img {
                     width: 30px;
                 }
@@ -159,7 +206,7 @@ export default {
             .bottom__emoji {
                 @include flex-rc-c;
                 width: 50px;
-                
+
                 img {
                     width: 30px;
                 }
@@ -168,7 +215,7 @@ export default {
             .bottom__more {
                 @include flex-rc-c;
                 padding-right: 11px;
-                
+
                 img {
                     width: 30px;
                 }
