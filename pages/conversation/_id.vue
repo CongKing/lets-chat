@@ -19,10 +19,6 @@
                         :avatar="avatar"
                         :name="nickname"/>
           </div>
-
-            <msg-sender />
-            <msg-getter />
-            <msg-getter />
         </div>
 
         <div class="v-convs-bottom">
@@ -65,13 +61,17 @@ export default {
       }
     },
     asyncData: async function(ctx) {
+      // TODO 查询最新20条消息
       let [err, data] = await fetch('getChattingHistory', {id: ctx.params.id})
       let {to ,history} = data
-      // 请求消息
-      console.log(history)
       return {to ,history}
     },
     mounted: function() {
+      this.scrollToBottom()
+      // TODO 监听聊天变化
+    },
+    destroyed: function() {
+      // TODO 取消监听
     },
     methods: {
         back: function() {
@@ -80,12 +80,6 @@ export default {
         send: async function() {
           if(this.sending) return
           this.sending = true
-          /**
-           * 1 生成生成 message ,
-           * 2 消掉 input 中的值
-           * 3 发送消息
-           * 4 监听成功发送的 callback
-           */
           const content = this.content
           // 本地生成 message
           this.history.push({
@@ -100,6 +94,7 @@ export default {
           // 发送消息
           await fetch('sendMsg', {id: this.to._id, content})
           this.sending = false
+          this.scrollToBottom()
         },
         scrollToBottom: function() {
             let height = this.$refs.compBody.clientHeight;

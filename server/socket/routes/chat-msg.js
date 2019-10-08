@@ -19,7 +19,7 @@ const getChattingHistory = async (ctx) => {
     nickname: '1',
     avatar: '1',
     mobile: '1'
-  })
+  }).sort({'createdAt':1})
 
   await ChatModel.findOneAndUpdate({from: ctx.socket.user, to: id}, {unread: 0})
   return {to, history}
